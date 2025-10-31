@@ -1,6 +1,9 @@
 name: "Manual - Test Features (Windows + WSL 24.04)"
 
 on:
+  push:
+    branches:
+      - "new-action-script-windows-wsl"  
   workflow_dispatch:
     inputs:
       features:
