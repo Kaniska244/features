@@ -67,17 +67,17 @@ jobs:
           wsl bash -lc "npm install -g @devcontainers/cli && devcontainer --version"
 
       # If you require Docker-in-WSL (for building images) uncomment and adapt:
-      # - name: (Optional) Install Docker Engine inside WSL
-      #   shell: bash
-      #   run: |
-      #     wsl bash -lc "set -e
-      #       sudo apt-get update
-      #       sudo apt-get install -y docker.io
-      #       sudo usermod -aG docker $USER
-      #       sudo systemctl enable docker || true
-      #       sudo systemctl start docker || true
-      #       docker version || true
-      #     "
+      - name: (Optional) Install Docker Engine inside WSL
+        shell: bash
+        run: |
+           wsl bash -lc "set -e
+             sudo apt-get update
+             sudo apt-get install -y docker.io
+             sudo usermod -aG docker $USER
+             sudo systemctl enable docker || true
+             sudo systemctl start docker || true
+             docker version || true
+           "
 
       # Run feature tests.
       - name: Test features inside WSL
