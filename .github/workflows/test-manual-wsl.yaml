@@ -95,8 +95,34 @@ jobs:
             echo 'Changing to WSL workspace directory'
             echo $WSL_PWD
             cd '$WSL_PWD'
-            ls -lha
-            echo 'Testing '\$FEATURES' against '\$BASE_IMAGE' (log level '\$LOG_LEVEL')'
+            
+            # Debug: Check current directory and files
+            echo 'Current directory:'
+            pwd
+            echo 'Directory contents:'
+            ls -la
+            
+            # Debug: Check if feature directories exist
+            echo 'Feature directories:'
+            ls -la src/
+            
+            # Debug: Check specific feature install.sh files
+            echo 'Checking common-utils feature:'
+            ls -la src/common-utils/
+            
+            # Debug: Check if install.sh is executable
+            if [ -f src/common-utils/install.sh ]; then
+              echo 'install.sh exists, checking permissions:'
+              ls -l src/common-utils/install.sh
+              file src/common-utils/install.sh
+            else
+              echo 'install.sh not found!'
+            fi
+            
+            # Make sure scripts are executable
+            find src/ -name '*.sh' -exec chmod +x {} \;
+            
+            echo 'Testing common-utils against base image (log level trace)'
             devcontainer features test \
                 --features \"common-utils\" \
                 --base-image \"mcr.microsoft.com/devcontainers/base:dev-debian-12\" \
