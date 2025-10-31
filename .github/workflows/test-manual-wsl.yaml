@@ -98,9 +98,9 @@ jobs:
             cd '$WSL_PWD'
             echo 'Testing '\$FEATURES' against '\$BASE_IMAGE' (log level '\$LOG_LEVEL')'
             devcontainer features test \
-                --features \"\common-utils\" \
-                --base-image \"\mcr.microsoft.com/devcontainers/base:dev-debian-12\" \
-                --log-level \"\trace\" \
+                --features \"common-utils\" \
+                --base-image \"mcr.microsoft.com/devcontainers/base:dev-debian-12\" \
+                --log-level \"trace\" \
                 .                
             "
 
