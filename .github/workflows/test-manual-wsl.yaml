@@ -103,7 +103,7 @@ jobs:
             # Debug information
             echo 'Current directory:' && pwd
             echo 'Feature structure:' && ls -la src/common-utils/ || echo 'common-utils not found'
-            
+            file src/common-utils/install.sh
             # Run the test
             echo 'Testing common-utils against base image...'
             devcontainer features test \
