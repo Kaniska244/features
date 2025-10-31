@@ -71,11 +71,9 @@ jobs:
         shell: bash
         run: |
            wsl bash -lc "set -e
-            WSL_USER=\$(id -un)
-            echo 'WSL User: '\$WSL_USER
             sudo apt-get update
             sudo apt-get install -y docker.io
-            sudo usermod -aG docker \$WSL_USER
+            sudo usermod -aG docker ubuntu
             sudo systemctl enable docker || true
             sudo systemctl start docker || true
             docker version || true
