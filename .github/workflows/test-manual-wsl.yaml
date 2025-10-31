@@ -93,42 +93,25 @@ jobs:
           wsl bash -lc "
             set -e
             echo 'Changing to WSL workspace directory'
-            echo $WSL_PWD
             cd '$WSL_PWD'
             
-            # Debug: Check current directory and files
-            echo 'Current directory:'
-            pwd
-            echo 'Directory contents:'
-            ls -la
+            # Fix common WSL issues
+            echo 'Fixing file permissions and line endings...'
+            find . -name '*.sh' -exec chmod +x {} \; 2>/dev/null || true
+            find . -name '*.sh' -exec dos2unix {} \; 2>/dev/null || true
             
-            # Debug: Check if feature directories exist
-            echo 'Feature directories:'
-            ls -la src/
+            # Debug information
+            echo 'Current directory:' && pwd
+            echo 'Feature structure:' && ls -la src/common-utils/ || echo 'common-utils not found'
             
-            # Debug: Check specific feature install.sh files
-            echo 'Checking common-utils feature:'
-            ls -la src/common-utils/
-            
-            # Debug: Check if install.sh is executable
-            if [ -f src/common-utils/install.sh ]; then
-              echo 'install.sh exists, checking permissions:'
-              ls -l src/common-utils/install.sh
-              file src/common-utils/install.sh
-            else
-              echo 'install.sh not found!'
-            fi
-            
-            # Make sure scripts are executable
-            find src/ -name '*.sh' -exec chmod +x {} \;
-            
-            echo 'Testing common-utils against base image (log level trace)'
+            # Run the test
+            echo 'Testing common-utils against base image...'
             devcontainer features test \
                 --features \"common-utils\" \
                 --base-image \"mcr.microsoft.com/devcontainers/base:dev-debian-12\" \
                 --log-level \"trace\" \
-                .                
-            "
+                .
+          "
 
       # Uncomment if devcontainer test produces logs/reports you want to retain
       # - name: Upload test logs
