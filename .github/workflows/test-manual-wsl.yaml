@@ -93,8 +93,10 @@ jobs:
           echo "WSL path: $WSL_PWD"
           wsl bash -lc "
             set -e
+            echo 'Changing to WSL workspace directory'
+            echo $WSL_PWD
             cd '$WSL_PWD'
-            echo "Testing '\$FEATURES' against '\$BASE_IMAGE' (log level '\$LOG_LEVEL')"
+            echo 'Testing '\$FEATURES' against '\$BASE_IMAGE' (log level '\$LOG_LEVEL')
             devcontainer features test \
               --features \"\$FEATURES\" \
               --base-image \"\$BASE_IMAGE\" \
