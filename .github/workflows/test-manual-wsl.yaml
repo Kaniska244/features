@@ -1,0 +1,108 @@
+name: "Manual - Test Features (Windows + WSL 24.04)"
+
+on:
+  workflow_dispatch:
+    inputs:
+      features:
+        description: "List of features to execute tests against"
+        required: true
+        default: "go dotnet"
+      baseImage:
+        description: "Base image used for devcontainer feature test"
+        required: true
+        default: "ubuntu:noble"
+      logLevel:
+        description: "Log Level (info/debug/trace)"
+        required: true
+        default: "info"
+
+jobs:
+  test-windows-wsl:
+    runs-on: windows-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup WSL (Ubuntu 24.04)
+        uses: Vampire/setup-wsl@v6
+        with:
+          distribution: Ubuntu-24.04
+          additional-packages: >
+            ca-certificates
+            curl
+            git
+            build-essential
+            python3
+            python3-pip
+
+      # (Optional) Use actions/cache to speed up subsequent global npm installs inside WSL.
+      - name: Cache WSL npm cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: wsl-npm-${{ runner.os }}-${{ github.ref }}-${{ github.event.inputs.baseImage }}
+          restore-keys: |
+            wsl-npm-${{ runner.os }}-
+            wsl-npm-
+
+      - name: Install Node.js 20.x inside WSL
+        shell: bash
+        run: |
+          wsl bash -lc "set -e
+            sudo apt-get update
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+            node -v
+            npm -v
+          "
+
+      - name: Install Dev Containers CLI inside WSL
+        shell: bash
+        run: |
+          wsl bash -lc "npm install -g @devcontainers/cli && devcontainer --version"
+
+      # If you require Docker-in-WSL (for building images) uncomment and adapt:
+      # - name: (Optional) Install Docker Engine inside WSL
+      #   shell: bash
+      #   run: |
+      #     wsl bash -lc "set -e
+      #       sudo apt-get update
+      #       sudo apt-get install -y docker.io
+      #       sudo usermod -aG docker $USER
+      #       sudo systemctl enable docker || true
+      #       sudo systemctl start docker || true
+      #       docker version || true
+      #     "
+
+      # Run feature tests.
+      - name: Test features inside WSL
+        shell: bash
+        env:
+          FEATURES: ${{ github.event.inputs.features }}
+          BASE_IMAGE: ${{ github.event.inputs.baseImage }}
+          LOG_LEVEL: ${{ github.event.inputs.logLevel }}
+        run: |
+          WIN_PWD="$(pwd)"
+          WSL_PWD="$(wsl wslpath "$WIN_PWD")"
+          echo "Windows path: $WIN_PWD"
+          echo "WSL path: $WSL_PWD"
+          wsl bash -lc "
+            set -e
+            cd '$WSL_PWD'
+            echo Testing '\$FEATURES' against '\$BASE_IMAGE' (log level '\$LOG_LEVEL')
+            devcontainer features test \
+              --features \"\$FEATURES\" \
+              --base-image \"\$BASE_IMAGE\" \
+              --log-level \"\$LOG_LEVEL\" \
+              .
+          "
+
+      # Uncomment if devcontainer test produces logs/reports you want to retain
+      # - name: Upload test logs
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: feature-test-logs
+      #     path: path/to/logs
+
