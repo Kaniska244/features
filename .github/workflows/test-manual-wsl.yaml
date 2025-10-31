@@ -110,7 +110,7 @@ jobs:
                 --features \"common-utils\" \
                 --base-image \"mcr.microsoft.com/devcontainers/base:dev-debian-12\" \
                 --log-level \"trace\" \
-                .
+                '\$WSL_PWD'
           "
 
       # Uncomment if devcontainer test produces logs/reports you want to retain
