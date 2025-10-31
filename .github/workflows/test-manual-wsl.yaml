@@ -95,6 +95,7 @@ jobs:
             echo 'Changing to WSL workspace directory'
             echo $WSL_PWD
             cd '$WSL_PWD'
+            ls -lha
             echo 'Testing '\$FEATURES' against '\$BASE_IMAGE' (log level '\$LOG_LEVEL')'
             devcontainer features test \
                 --features \"common-utils\" \
