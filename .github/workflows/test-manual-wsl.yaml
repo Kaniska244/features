@@ -103,6 +103,8 @@ jobs:
             # Debug information
             echo 'Current directory:' && pwd
             echo 'Feature structure:' && ls -la src/common-utils/ || echo 'common-utils not found'
+            echo 'Fixing CRLF line endings...'
+            find src/ -name '*.sh' -exec sed -i 's/\r$//' {} \;
             file src/common-utils/install.sh
             # Run the test
             echo 'Testing common-utils against base image...'
