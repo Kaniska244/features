@@ -71,14 +71,15 @@ jobs:
         shell: bash
         run: |
            wsl bash -lc "set -e
-             sudo apt-get update
-             sudo apt-get install -y docker.io
-             sudo usermod -aG docker $(whoami)
-             sudo systemctl enable docker || true
-             sudo systemctl start docker || true
-             docker version || true
+            WSL_USER=\$(id -un)
+            echo 'WSL User: '\$WSL_USER
+            sudo apt-get update
+            sudo apt-get install -y docker.io
+            sudo usermod -aG docker \$WSL_USER
+            sudo systemctl enable docker || true
+            sudo systemctl start docker || true
+            docker version || true
            "
-
       # Run feature tests.
       - name: Test features inside WSL
         shell: bash
