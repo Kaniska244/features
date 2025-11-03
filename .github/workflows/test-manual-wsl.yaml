@@ -69,7 +69,7 @@ jobs:
 
             # Install Docker Buildx system-wide
             echo "Installing Docker Buildx system-wide..."
-            url -s https://api.github.com/repos/docker/buildx/releases/latest | jq -r ".tag_name"
+            curl -s https://api.github.com/repos/docker/buildx/releases/latest | jq -r ".tag_name"
             BUILDX_VERSION=$(curl -s https://api.github.com/repos/docker/buildx/releases/latest | jq -r ".tag_name")
             echo "Installing Buildx version: $BUILDX_VERSION"
             
